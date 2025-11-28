@@ -1,0 +1,516 @@
+{
+  "_stage": "layouted",
+  "projectId": "default",
+  "project": {
+    "id": "default",
+    "title": "default"
+  },
+  "specification": {
+    "tags": {},
+    "elements": {
+      "api": {
+        "style": {}
+      },
+      "service": {
+        "style": {
+          "color": "secondary"
+        }
+      },
+      "database": {
+        "style": {
+          "shape": "storage",
+          "color": "amber",
+          "size": "sm"
+        }
+      },
+      "queue": {
+        "style": {
+          "shape": "queue",
+          "color": "indigo",
+          "size": "sm"
+        }
+      }
+    },
+    "relationships": {},
+    "deployments": {},
+    "customColors": {}
+  },
+  "elements": {
+    "gateway": {
+      "style": {},
+      "description": {
+        "txt": "Payment Gateway that is consumed by clients"
+      },
+      "title": "Payment Gateway API",
+      "kind": "api",
+      "id": "gateway"
+    },
+    "backendService": {
+      "style": {
+        "color": "secondary"
+      },
+      "description": {
+        "txt": "Payment Service that process payment requests"
+      },
+      "title": "Payment Service",
+      "kind": "service",
+      "id": "backendService"
+    },
+    "backendService.svc": {
+      "style": {
+        "color": "secondary"
+      },
+      "description": {
+        "txt": "Payment Service"
+      },
+      "title": "Service",
+      "kind": "service",
+      "id": "backendService.svc"
+    },
+    "backendService.db": {
+      "style": {
+        "shape": "storage",
+        "color": "amber",
+        "size": "sm"
+      },
+      "description": {
+        "txt": "Store payment transaction details"
+      },
+      "title": "Database",
+      "kind": "database",
+      "id": "backendService.db"
+    },
+    "backendService.notification": {
+      "style": {
+        "shape": "queue",
+        "color": "indigo",
+        "size": "sm"
+      },
+      "description": {
+        "txt": "Dispatch notifications"
+      },
+      "title": "Payment notification",
+      "kind": "queue",
+      "id": "backendService.notification"
+    }
+  },
+  "relations": {
+    "1ypswn": {
+      "title": "Submit for processing",
+      "source": {
+        "model": "gateway"
+      },
+      "target": {
+        "model": "backendService"
+      },
+      "id": "1ypswn"
+    },
+    "1oi6by3": {
+      "title": "Write transactions",
+      "source": {
+        "model": "backendService.svc"
+      },
+      "target": {
+        "model": "backendService.db"
+      },
+      "id": "1oi6by3"
+    },
+    "1a83gwn": {
+      "title": "Dispatch notifications",
+      "source": {
+        "model": "backendService.svc"
+      },
+      "target": {
+        "model": "backendService.notification"
+      },
+      "id": "1a83gwn"
+    }
+  },
+  "globals": {
+    "predicates": {},
+    "dynamicPredicates": {},
+    "styles": {}
+  },
+  "views": {
+    "index": {
+      "_type": "element",
+      "tags": null,
+      "links": null,
+      "_stage": "layouted",
+      "sourcePath": "simplePayments.view.c4",
+      "description": null,
+      "title": "Landscape view",
+      "id": "index",
+      "autoLayout": {
+        "direction": "TB"
+      },
+      "hash": "1ebe447be3000560ab1d1ec5ecf4286f64ba689e",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 363,
+        "height": 503
+      },
+      "nodes": [
+        {
+          "id": "gateway",
+          "parent": null,
+          "level": 0,
+          "children": [],
+          "inEdges": [],
+          "outEdges": [
+            "19cv9m3"
+          ],
+          "title": "Payment Gateway API",
+          "modelRef": "gateway",
+          "shape": "rectangle",
+          "color": "primary",
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "description": {
+            "txt": "Payment Gateway that is consumed by clients"
+          },
+          "tags": [],
+          "kind": "api",
+          "x": 8,
+          "y": 0,
+          "width": 346,
+          "height": 180,
+          "labelBBox": {
+            "x": 18,
+            "y": 63,
+            "width": 311,
+            "height": 48
+          }
+        },
+        {
+          "id": "backendService",
+          "parent": null,
+          "level": 0,
+          "children": [],
+          "inEdges": [
+            "19cv9m3"
+          ],
+          "outEdges": [],
+          "title": "Payment Service",
+          "modelRef": "backendService",
+          "shape": "rectangle",
+          "color": "secondary",
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "description": {
+            "txt": "Payment Service that process payment requests"
+          },
+          "tags": [],
+          "kind": "service",
+          "navigateTo": "view_bs5qz2",
+          "x": 0,
+          "y": 323,
+          "width": 362,
+          "height": 180,
+          "labelBBox": {
+            "x": 18,
+            "y": 63,
+            "width": 327,
+            "height": 47
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "19cv9m3",
+          "source": "gateway",
+          "target": "backendService",
+          "label": "Submit for processing",
+          "points": [
+            [
+              181,
+              180
+            ],
+            [
+              181,
+              221
+            ],
+            [
+              181,
+              270
+            ],
+            [
+              181,
+              313
+            ]
+          ],
+          "labelBBox": {
+            "x": 182,
+            "y": 240,
+            "width": 139,
+            "height": 18
+          },
+          "parent": null,
+          "relations": [
+            "1ypswn"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        }
+      ]
+    },
+    "view_bs5qz2": {
+      "_type": "element",
+      "tags": null,
+      "links": null,
+      "viewOf": "backendService",
+      "_stage": "layouted",
+      "sourcePath": "simplePayments.view.c4",
+      "description": null,
+      "title": "Payment Service",
+      "id": "view_bs5qz2",
+      "autoLayout": {
+        "direction": "TB"
+      },
+      "hash": "bdf86603cf63b6531e2abb0de586ef770e650219",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 686,
+        "height": 575
+      },
+      "nodes": [
+        {
+          "id": "backendService",
+          "parent": null,
+          "level": 0,
+          "children": [
+            "backendService.svc",
+            "backendService.db",
+            "backendService.notification"
+          ],
+          "inEdges": [],
+          "outEdges": [],
+          "title": "Payment Service",
+          "modelRef": "backendService",
+          "shape": "rectangle",
+          "color": "secondary",
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "description": {
+            "txt": "Payment Service that process payment requests"
+          },
+          "tags": [],
+          "kind": "service",
+          "depth": 1,
+          "x": 8,
+          "y": 8,
+          "width": 670,
+          "height": 559,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 109,
+            "height": 15
+          }
+        },
+        {
+          "id": "backendService.svc",
+          "parent": "backendService",
+          "level": 1,
+          "children": [],
+          "inEdges": [],
+          "outEdges": [
+            "12poczu",
+            "13ir39d"
+          ],
+          "title": "Service",
+          "modelRef": "backendService.svc",
+          "shape": "rectangle",
+          "color": "secondary",
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "description": {
+            "txt": "Payment Service"
+          },
+          "tags": [],
+          "kind": "service",
+          "x": 144,
+          "y": 69,
+          "width": 320,
+          "height": 180,
+          "labelBBox": {
+            "x": 101,
+            "y": 63,
+            "width": 117,
+            "height": 48
+          }
+        },
+        {
+          "id": "backendService.db",
+          "parent": "backendService",
+          "level": 1,
+          "children": [],
+          "inEdges": [
+            "12poczu"
+          ],
+          "outEdges": [],
+          "title": "Database",
+          "modelRef": "backendService.db",
+          "shape": "storage",
+          "color": "amber",
+          "style": {
+            "opacity": 15,
+            "size": "sm"
+          },
+          "description": {
+            "txt": "Store payment transaction details"
+          },
+          "tags": [],
+          "kind": "database",
+          "x": 48,
+          "y": 392,
+          "width": 240,
+          "height": 135,
+          "labelBBox": {
+            "x": 29,
+            "y": 45,
+            "width": 182,
+            "height": 40
+          }
+        },
+        {
+          "id": "backendService.notification",
+          "parent": "backendService",
+          "level": 1,
+          "children": [],
+          "inEdges": [
+            "13ir39d"
+          ],
+          "outEdges": [],
+          "title": "Payment notification",
+          "modelRef": "backendService.notification",
+          "shape": "queue",
+          "color": "indigo",
+          "style": {
+            "opacity": 15,
+            "size": "sm"
+          },
+          "description": {
+            "txt": "Dispatch notifications"
+          },
+          "tags": [],
+          "kind": "queue",
+          "x": 398,
+          "y": 396,
+          "width": 240,
+          "height": 127,
+          "labelBBox": {
+            "x": 46,
+            "y": 41,
+            "width": 148,
+            "height": 40
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "12poczu",
+          "source": "backendService.svc",
+          "target": "backendService.db",
+          "label": "Write transactions",
+          "points": [
+            [
+              250,
+              249
+            ],
+            [
+              240,
+              269
+            ],
+            [
+              229,
+              289
+            ],
+            [
+              220,
+              309
+            ],
+            [
+              210,
+              332
+            ],
+            [
+              200,
+              358
+            ],
+            [
+              192,
+              381
+            ]
+          ],
+          "labelBBox": {
+            "x": 221,
+            "y": 309,
+            "width": 116,
+            "height": 18
+          },
+          "parent": "backendService",
+          "relations": [
+            "1oi6by3"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        },
+        {
+          "id": "13ir39d",
+          "source": "backendService.svc",
+          "target": "backendService.notification",
+          "label": "Dispatch notifications",
+          "points": [
+            [
+              368,
+              249
+            ],
+            [
+              399,
+              293
+            ],
+            [
+              437,
+              346
+            ],
+            [
+              467,
+              388
+            ]
+          ],
+          "labelBBox": {
+            "x": 425,
+            "y": 309,
+            "width": 136,
+            "height": 18
+          },
+          "parent": "backendService",
+          "relations": [
+            "1a83gwn"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        }
+      ]
+    }
+  },
+  "deployments": {
+    "elements": {},
+    "relations": {}
+  },
+  "imports": {}
+}

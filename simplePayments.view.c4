@@ -1,0 +1,9 @@
+views {
+    view index {
+        include *
+    }
+
+    view of backendService {
+        include *
+    }
+}

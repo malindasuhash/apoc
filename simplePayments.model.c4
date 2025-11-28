@@ -1,0 +1,45 @@
+
+
+model {
+    gateway = api 'Payment Gateway API' {
+        metadata {
+            scope 'pci'
+            tier 'critical'
+        }
+        description 'Payment Gateway that is consumed by clients'
+    }
+
+    backendService = service 'Payment Service' {
+        description 'Payment Service that process payment requests'
+
+        svc = service 'Service' {
+            metadata {
+                scope 'pci'
+                tier 'critical'
+            }
+            description 'Payment Service'
+        }
+        
+        db = database 'Database' {
+            metadata {
+                type 'relational'
+                tier 'critical'
+            }
+            description 'Store payment transaction details'
+        }
+
+        notification = queue 'Payment notification' {
+            metadata {
+                type 'topic'
+                tier 'critical'
+            }
+            description 'Dispatch notifications'            
+        }
+
+        svc -> db 'Write transactions'
+        svc -> notification 'Dispatch notifications'
+    }
+
+    gateway -> backendService "Submit for processing"
+}
+

@@ -1,0 +1,22 @@
+specification {
+  element api
+  element service {
+    style {
+        color secondary
+    }
+  }
+  element database {
+    style {
+        shape storage
+        color amber
+        size small
+    }
+  }
+  element queue {
+    style {
+        shape queue
+        color indigo
+        size small
+    }
+  }
+}
