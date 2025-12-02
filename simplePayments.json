@@ -32,11 +32,48 @@
       }
     },
     "relationships": {},
-    "deployments": {},
+    "deployments": {
+      "env": {
+        "style": {}
+      },
+      "region": {
+        "style": {}
+      },
+      "network": {
+        "style": {}
+      },
+      "zone": {
+        "style": {}
+      },
+      "k8s": {
+        "style": {}
+      },
+      "hostedService": {
+        "style": {}
+      },
+      "relationalDatabase": {
+        "style": {}
+      },
+      "topicOrQueue": {
+        "style": {}
+      }
+    },
+    "metadataKeys": [
+      "addressCidr",
+      "minimumNodes",
+      "scope",
+      "tier",
+      "type",
+      "zones"
+    ],
     "customColors": {}
   },
   "elements": {
     "gateway": {
+      "metadata": {
+        "scope": "pci",
+        "tier": "critical"
+      },
       "style": {},
       "description": {
         "txt": "Payment Gateway that is consumed by clients"
@@ -57,6 +94,10 @@
       "id": "backendService"
     },
     "backendService.svc": {
+      "metadata": {
+        "scope": "pci",
+        "tier": "critical"
+      },
       "style": {
         "color": "secondary"
       },
@@ -68,6 +109,10 @@
       "id": "backendService.svc"
     },
     "backendService.db": {
+      "metadata": {
+        "type": "relational",
+        "tier": "critical"
+      },
       "style": {
         "shape": "storage",
         "color": "amber",
@@ -81,6 +126,10 @@
       "id": "backendService.db"
     },
     "backendService.notification": {
+      "metadata": {
+        "type": "topic",
+        "tier": "critical"
+      },
       "style": {
         "shape": "queue",
         "color": "indigo",
@@ -95,15 +144,15 @@
     }
   },
   "relations": {
-    "1ypswn": {
+    "136xeqn": {
       "title": "Submit for processing",
       "source": {
         "model": "gateway"
       },
       "target": {
-        "model": "backendService"
+        "model": "backendService.svc"
       },
-      "id": "1ypswn"
+      "id": "136xeqn"
     },
     "1oi6by3": {
       "title": "Write transactions",
@@ -132,12 +181,372 @@
     "styles": {}
   },
   "views": {
+    "paymentDeployment": {
+      "_type": "deployment",
+      "tags": null,
+      "links": null,
+      "_stage": "layouted",
+      "sourcePath": "apoc/simplePayments.dep.view.c4",
+      "description": null,
+      "title": "Payment Service deployment",
+      "id": "paymentDeployment",
+      "autoLayout": {
+        "direction": "TB"
+      },
+      "hash": "3c01066bc5e0bce49dee9e11c1f5b2f7c11cef42",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1114,
+        "height": 938
+      },
+      "nodes": [
+        {
+          "id": "production",
+          "parent": null,
+          "level": 0,
+          "children": [
+            "production.deploymentRegion"
+          ],
+          "inEdges": [],
+          "outEdges": [],
+          "deploymentRef": "production",
+          "title": "production",
+          "kind": "env",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "depth": 4,
+          "x": 8,
+          "y": 8,
+          "width": 1098,
+          "height": 922,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 78,
+            "height": 15
+          }
+        },
+        {
+          "id": "production.deploymentRegion",
+          "parent": "production",
+          "level": 1,
+          "children": [
+            "production.deploymentRegion.virtualNetwork"
+          ],
+          "inEdges": [],
+          "outEdges": [],
+          "deploymentRef": "production.deploymentRegion",
+          "title": "Region",
+          "kind": "region",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "depth": 3,
+          "x": 40,
+          "y": 61,
+          "width": 1034,
+          "height": 837,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 47,
+            "height": 15
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork",
+          "parent": "production.deploymentRegion",
+          "level": 2,
+          "children": [
+            "production.deploymentRegion.virtualNetwork.applicationSubnet",
+            "production.deploymentRegion.virtualNetwork.resourceSubnet"
+          ],
+          "inEdges": [],
+          "outEdges": [],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork",
+          "title": "Virtual Network",
+          "kind": "network",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "depth": 2,
+          "x": 72,
+          "y": 114,
+          "width": 970,
+          "height": 752,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 112,
+            "height": 15
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork.applicationSubnet",
+          "parent": "production.deploymentRegion.virtualNetwork",
+          "level": 3,
+          "children": [
+            "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric"
+          ],
+          "inEdges": [],
+          "outEdges": [
+            "1hichas",
+            "i1z5w4"
+          ],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork.applicationSubnet",
+          "title": "Application Subnet",
+          "kind": "network",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "depth": 1,
+          "x": 320,
+          "y": 186,
+          "width": 384,
+          "height": 265,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 127,
+            "height": 15
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric",
+          "parent": "production.deploymentRegion.virtualNetwork.applicationSubnet",
+          "level": 4,
+          "children": [],
+          "inEdges": [],
+          "outEdges": [
+            "1hichas",
+            "i1z5w4"
+          ],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric",
+          "title": "Application Fabric",
+          "kind": "k8s",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "x": 352,
+          "y": 239,
+          "width": 320,
+          "height": 180,
+          "labelBBox": {
+            "x": 79,
+            "y": 74,
+            "width": 163,
+            "height": 24
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork.resourceSubnet",
+          "parent": "production.deploymentRegion.virtualNetwork",
+          "level": 3,
+          "children": [
+            "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue",
+            "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB"
+          ],
+          "inEdges": [
+            "1hichas",
+            "i1z5w4"
+          ],
+          "outEdges": [],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork.resourceSubnet",
+          "title": "Resources Subnet",
+          "kind": "network",
+          "color": "primary",
+          "shape": "rectangle",
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "depth": 1,
+          "x": 122,
+          "y": 515,
+          "width": 870,
+          "height": 301,
+          "labelBBox": {
+            "x": 6,
+            "y": 0,
+            "width": 122,
+            "height": 15
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue",
+          "parent": "production.deploymentRegion.virtualNetwork.resourceSubnet",
+          "level": 4,
+          "children": [],
+          "inEdges": [
+            "1hichas"
+          ],
+          "outEdges": [],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue",
+          "title": "Payment notification",
+          "kind": "topicOrQueue",
+          "color": "indigo",
+          "shape": "queue",
+          "modelRef": "backendService.notification",
+          "description": {
+            "txt": "Dispatch notifications"
+          },
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "x": 172,
+          "y": 590,
+          "width": 320,
+          "height": 172,
+          "labelBBox": {
+            "x": 68,
+            "y": 59,
+            "width": 184,
+            "height": 47
+          }
+        },
+        {
+          "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB",
+          "parent": "production.deploymentRegion.virtualNetwork.resourceSubnet",
+          "level": 4,
+          "children": [],
+          "inEdges": [
+            "i1z5w4"
+          ],
+          "outEdges": [],
+          "deploymentRef": "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB",
+          "title": "Database",
+          "kind": "relationalDatabase",
+          "color": "amber",
+          "shape": "storage",
+          "modelRef": "backendService.db",
+          "description": {
+            "txt": "Store payment transaction details"
+          },
+          "tags": [],
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "x": 622,
+          "y": 586,
+          "width": 320,
+          "height": 180,
+          "labelBBox": {
+            "x": 47,
+            "y": 63,
+            "width": 227,
+            "height": 47
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "1hichas",
+          "source": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric",
+          "target": "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue",
+          "label": "Dispatch notifications",
+          "points": [
+            [
+              466,
+              419
+            ],
+            [
+              440,
+              468
+            ],
+            [
+              408,
+              530
+            ],
+            [
+              381,
+              581
+            ]
+          ],
+          "labelBBox": {
+            "x": 428,
+            "y": 483,
+            "width": 136,
+            "height": 18
+          },
+          "parent": "production.deploymentRegion.virtualNetwork",
+          "relations": [
+            "1a83gwn"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        },
+        {
+          "id": "i1z5w4",
+          "source": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric",
+          "target": "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB",
+          "label": "Write transactions",
+          "points": [
+            [
+              582,
+              419
+            ],
+            [
+              619,
+              467
+            ],
+            [
+              666,
+              527
+            ],
+            [
+              705,
+              577
+            ]
+          ],
+          "labelBBox": {
+            "x": 648,
+            "y": 483,
+            "width": 116,
+            "height": 18
+          },
+          "parent": "production.deploymentRegion.virtualNetwork",
+          "relations": [
+            "1oi6by3"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        }
+      ]
+    },
     "index": {
       "_type": "element",
       "tags": null,
       "links": null,
       "_stage": "layouted",
-      "sourcePath": "simplePayments.view.c4",
+      "sourcePath": "apoc/simplePayments.view.c4",
       "description": null,
       "title": "Landscape view",
       "id": "index",
@@ -207,7 +616,7 @@
           },
           "tags": [],
           "kind": "service",
-          "navigateTo": "view_bs5qz2",
+          "navigateTo": "view_1c71unw",
           "x": 0,
           "y": 323,
           "width": 362,
@@ -252,7 +661,7 @@
           },
           "parent": null,
           "relations": [
-            "1ypswn"
+            "136xeqn"
           ],
           "color": "gray",
           "line": "dashed",
@@ -260,27 +669,60 @@
         }
       ]
     },
-    "view_bs5qz2": {
+    "view_1c71unw": {
       "_type": "element",
       "tags": null,
       "links": null,
       "viewOf": "backendService",
       "_stage": "layouted",
-      "sourcePath": "simplePayments.view.c4",
+      "sourcePath": "apoc/simplePayments.view.c4",
       "description": null,
       "title": "Payment Service",
-      "id": "view_bs5qz2",
+      "id": "view_1c71unw",
       "autoLayout": {
         "direction": "TB"
       },
-      "hash": "bdf86603cf63b6531e2abb0de586ef770e650219",
+      "hash": "47d7caade894462543a64862c37e031b3d38769f",
       "bounds": {
         "x": 0,
         "y": 0,
         "width": 686,
-        "height": 575
+        "height": 838
       },
       "nodes": [
+        {
+          "id": "gateway",
+          "parent": null,
+          "level": 0,
+          "children": [],
+          "inEdges": [],
+          "outEdges": [
+            "7dps4j"
+          ],
+          "title": "Payment Gateway API",
+          "modelRef": "gateway",
+          "shape": "rectangle",
+          "color": "primary",
+          "style": {
+            "opacity": 15,
+            "size": "md"
+          },
+          "description": {
+            "txt": "Payment Gateway that is consumed by clients"
+          },
+          "tags": [],
+          "kind": "api",
+          "x": 131,
+          "y": 0,
+          "width": 346,
+          "height": 180,
+          "labelBBox": {
+            "x": 18,
+            "y": 63,
+            "width": 311,
+            "height": 48
+          }
+        },
         {
           "id": "backendService",
           "parent": null,
@@ -290,7 +732,9 @@
             "backendService.db",
             "backendService.notification"
           ],
-          "inEdges": [],
+          "inEdges": [
+            "7dps4j"
+          ],
           "outEdges": [],
           "title": "Payment Service",
           "modelRef": "backendService",
@@ -307,7 +751,7 @@
           "kind": "service",
           "depth": 1,
           "x": 8,
-          "y": 8,
+          "y": 271,
           "width": 670,
           "height": 559,
           "labelBBox": {
@@ -322,7 +766,9 @@
           "parent": "backendService",
           "level": 1,
           "children": [],
-          "inEdges": [],
+          "inEdges": [
+            "7dps4j"
+          ],
           "outEdges": [
             "12poczu",
             "13ir39d"
@@ -341,7 +787,7 @@
           "tags": [],
           "kind": "service",
           "x": 144,
-          "y": 69,
+          "y": 332,
           "width": 320,
           "height": 180,
           "labelBBox": {
@@ -374,12 +820,12 @@
           "tags": [],
           "kind": "database",
           "x": 48,
-          "y": 392,
+          "y": 654,
           "width": 240,
           "height": 135,
           "labelBBox": {
             "x": 29,
-            "y": 45,
+            "y": 46,
             "width": 182,
             "height": 40
           }
@@ -407,18 +853,55 @@
           "tags": [],
           "kind": "queue",
           "x": 398,
-          "y": 396,
+          "y": 658,
           "width": 240,
           "height": 127,
           "labelBBox": {
             "x": 46,
-            "y": 41,
+            "y": 42,
             "width": 148,
             "height": 40
           }
         }
       ],
       "edges": [
+        {
+          "id": "7dps4j",
+          "source": "gateway",
+          "target": "backendService.svc",
+          "label": "Submit for processing",
+          "points": [
+            [
+              304,
+              180
+            ],
+            [
+              304,
+              224
+            ],
+            [
+              304,
+              277
+            ],
+            [
+              304,
+              322
+            ]
+          ],
+          "labelBBox": {
+            "x": 305,
+            "y": 240,
+            "width": 139,
+            "height": 18
+          },
+          "parent": null,
+          "relations": [
+            "136xeqn"
+          ],
+          "color": "gray",
+          "line": "dashed",
+          "head": "normal"
+        },
         {
           "id": "12poczu",
           "source": "backendService.svc",
@@ -427,36 +910,36 @@
           "points": [
             [
               250,
-              249
+              512
             ],
             [
               240,
-              269
+              531
             ],
             [
               229,
-              289
+              552
             ],
             [
               220,
-              309
+              572
             ],
             [
               210,
-              332
+              595
             ],
             [
               200,
-              358
+              621
             ],
             [
               192,
-              381
+              644
             ]
           ],
           "labelBBox": {
             "x": 221,
-            "y": 309,
+            "y": 572,
             "width": 116,
             "height": 18
           },
@@ -476,24 +959,24 @@
           "points": [
             [
               368,
-              249
+              512
             ],
             [
               399,
-              293
+              556
             ],
             [
               437,
-              346
+              609
             ],
             [
               467,
-              388
+              651
             ]
           ],
           "labelBBox": {
             "x": 425,
-            "y": 309,
+            "y": 572,
             "width": 136,
             "height": 18
           },
@@ -509,7 +992,91 @@
     }
   },
   "deployments": {
-    "elements": {},
+    "elements": {
+      "production": {
+        "style": {},
+        "kind": "env",
+        "title": "production",
+        "id": "production"
+      },
+      "production.deploymentRegion": {
+        "style": {},
+        "kind": "region",
+        "metadata": {
+          "type": "Approved Cloud Region"
+        },
+        "title": "Region",
+        "id": "production.deploymentRegion"
+      },
+      "production.deploymentRegion.virtualNetwork": {
+        "style": {},
+        "kind": "network",
+        "metadata": {
+          "type": "Virtual Network",
+          "addressCidr": "11.1.0.0/16"
+        },
+        "title": "Virtual Network",
+        "id": "production.deploymentRegion.virtualNetwork"
+      },
+      "production.deploymentRegion.virtualNetwork.applicationSubnet": {
+        "style": {},
+        "kind": "network",
+        "metadata": {
+          "type": "Subnet"
+        },
+        "title": "Application Subnet",
+        "id": "production.deploymentRegion.virtualNetwork.applicationSubnet"
+      },
+      "production.deploymentRegion.virtualNetwork.resourceSubnet": {
+        "style": {},
+        "kind": "network",
+        "title": "Resources Subnet",
+        "id": "production.deploymentRegion.virtualNetwork.resourceSubnet"
+      },
+      "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric": {
+        "style": {},
+        "kind": "k8s",
+        "metadata": {
+          "type": "Kubernetes cluster",
+          "zones": "3",
+          "minimumNodes": "3"
+        },
+        "title": "Application Fabric",
+        "id": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric"
+      },
+      "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue": {
+        "style": {},
+        "kind": "topicOrQueue",
+        "title": "notificationQueue",
+        "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue"
+      },
+      "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB": {
+        "style": {},
+        "kind": "relationalDatabase",
+        "title": "paymentDB",
+        "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB"
+      },
+      "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric.gateway": {
+        "id": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric.gateway",
+        "element": "gateway",
+        "style": {}
+      },
+      "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric.svc": {
+        "id": "production.deploymentRegion.virtualNetwork.applicationSubnet.deploymentFabric.svc",
+        "element": "backendService.svc",
+        "style": {}
+      },
+      "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue.notification": {
+        "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue.notification",
+        "element": "backendService.notification",
+        "style": {}
+      },
+      "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB.db": {
+        "id": "production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB.db",
+        "element": "backendService.db",
+        "style": {}
+      }
+    },
     "relations": {}
   },
   "imports": {}

@@ -1,0 +1,53 @@
+deployment {
+    env production {
+        region deploymentRegion {
+            title 'Region'
+
+            metadata {
+                type 'Approved Cloud Region'
+            }
+
+            network virtualNetwork {
+                title 'Virtual Network'
+
+                metadata {
+                    type 'Virtual Network'
+                    addressCidr '11.1.0.0/16'
+                }
+                
+                network applicationSubnet {
+                    title 'Application Subnet'
+                    metadata {
+                        type 'Subnet'                        
+                    }
+                    // Services
+                    k8s deploymentFabric {
+                        title 'Application Fabric'
+                        metadata {
+                            type 'Kubernetes cluster'
+                            zones '3'
+                            minimumNodes '3'
+                        }
+
+                        instanceOf gateway
+                        instanceOf backendService.svc
+                    }
+                }
+
+                network resourceSubnet {
+                    title 'Resources Subnet'
+
+                    // Notification queue
+                    topicOrQueue notificationQueue {
+                        instanceOf backendService.notification
+                    }
+
+                    // Database
+                    relationalDatabase paymentDB {
+                        instanceOf backendService.db
+                    }
+                }
+            }
+        }
+    }
+}

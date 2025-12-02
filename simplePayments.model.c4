@@ -40,6 +40,6 @@ model {
         svc -> notification 'Dispatch notifications'
     }
 
-    gateway -> backendService "Submit for processing"
+    gateway -> backendService.svc "Submit for processing"
 }
 

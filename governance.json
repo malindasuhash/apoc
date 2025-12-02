@@ -1,0 +1,15 @@
+{
+    "approvedTooling" : {
+        "azure": {
+            "regions": ["UK South", "UK West"],
+            "services": [
+                "Azure SQL Server Standard",
+                "Service Bus Standard"
+            ]
+        },
+
+        "aws": {
+
+        }
+    }
+}

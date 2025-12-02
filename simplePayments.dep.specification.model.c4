@@ -1,0 +1,10 @@
+specification {
+    deploymentNode env
+    deploymentNode region
+    deploymentNode network
+    deploymentNode zone
+    deploymentNode k8s
+    deploymentNode hostedService
+    deploymentNode relationalDatabase
+    deploymentNode topicOrQueue    
+}

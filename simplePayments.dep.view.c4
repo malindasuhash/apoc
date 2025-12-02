@@ -1,0 +1,13 @@
+views {
+    deployment view paymentDeployment {
+        title 'Payment Service deployment'
+        include production
+        include production.deploymentRegion
+        include production.virtualNetwork
+        include production.virtualNetwork.applicationSubnet
+        include production.virtualNetwork.applicationSubnet.*
+        
+        include production.virtualNetwork.resourceSubnet
+        include production.virtualNetwork.resourceSubnet.*
+    }
+}
