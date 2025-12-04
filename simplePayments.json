@@ -63,8 +63,7 @@
       "minimumNodes",
       "scope",
       "tier",
-      "type",
-      "zones"
+      "type"
     ],
     "customColors": {}
   },
@@ -186,7 +185,7 @@
       "tags": null,
       "links": null,
       "_stage": "layouted",
-      "sourcePath": "apoc/simplePayments.dep.view.c4",
+      "sourcePath": "simplePayments.dep.view.c4",
       "description": null,
       "title": "Payment Service deployment",
       "id": "paymentDeployment",
@@ -546,7 +545,7 @@
       "tags": null,
       "links": null,
       "_stage": "layouted",
-      "sourcePath": "apoc/simplePayments.view.c4",
+      "sourcePath": "simplePayments.view.c4",
       "description": null,
       "title": "Landscape view",
       "id": "index",
@@ -675,7 +674,7 @@
       "links": null,
       "viewOf": "backendService",
       "_stage": "layouted",
-      "sourcePath": "apoc/simplePayments.view.c4",
+      "sourcePath": "simplePayments.view.c4",
       "description": null,
       "title": "Payment Service",
       "id": "view_1c71unw",
@@ -1038,7 +1037,6 @@
         "kind": "k8s",
         "metadata": {
           "type": "Kubernetes cluster",
-          "zones": "3",
           "minimumNodes": "3"
         },
         "title": "Application Fabric",

@@ -1,10 +1,13 @@
 {
     "approvedTooling" : {
         "azure": {
-            "regions": ["UK South", "UK West"],
+            "regions": ["uksouth", "ukwest"],
             "services": [
                 "Azure SQL Server Standard",
                 "Service Bus Standard"
+            ],
+            "tips": [
+                "Use ignore_missing_vnet_service_endpoint"
             ]
         },
 
