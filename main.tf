@@ -12,88 +12,81 @@ terraform {
 }
 
 provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
+  features {}
 }
 
 locals {
-  # Input 2 Governance: Approved Region
+  # Governance: Approved Region from Input 2
   location = "uksouth"
-  env_name = "production"
-  prefix   = "pay-prod"
+  # Architecture: Project ID from Input 1
+  project_id = "default"
+  env        = "production"
 
-  tags = {
-    Environment = local.env_name
-    Project     = "Payment Service"
+  common_tags = {
+    Environment = local.env
+    Project     = local.project_id
     ManagedBy   = "Terraform"
   }
-
-  # Input 1 Architecture: VNet CIDR
-  vnet_cidr = "11.1.0.0/16"
-  # Subnet planning based on VNet CIDR
-  app_subnet_cidr      = "11.1.1.0/24"
-  resource_subnet_cidr = "11.1.2.0/24"
 }
-
-# Generate secure passwords for infrastructure
-resource "random_password" "sql_admin" {
-  length           = 32
-  special          = true
-  override_special = "_%@"
-}
-
-# ==============================================================================
-# Base Infrastructure (Input 1: env, region, network)
-# ==============================================================================
 
 resource "azurerm_resource_group" "main" {
-  name     = "${local.prefix}-rg"
+  name     = "rg-${local.project_id}-${local.env}-${local.location}"
   location = local.location
-  tags     = local.tags
+  tags     = local.common_tags
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = "${local.prefix}-vnet"
+# ==============================================================================
+# Networking
+# Architecture: Defined in production.deploymentRegion.virtualNetwork
+# ==============================================================================
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "vnet-${local.project_id}-${local.env}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  address_space       = [local.vnet_cidr]
-  tags                = local.tags
+  # Architecture: addressCidr: "11.1.0.0/16"
+  address_space       = ["11.1.0.0/16"]
+  tags                = local.common_tags
 }
 
-# Application Subnet for AKS
-resource "azurerm_subnet" "application" {
-  name                 = "application-subnet"
+# Architecture: production.deploymentRegion.virtualNetwork.applicationSubnet
+resource "azurerm_subnet" "app_subnet" {
+  name                 = "snet-app"
   resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = [local.app_subnet_cidr]
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  # Carving out a subnet from the VNet CIDR
+  address_prefixes     = ["11.1.1.0/24"]
+
+  # Governance: Enable service endpoints required for PaaS connectivity
+  service_endpoints    = ["Microsoft.Sql", "Microsoft.ServiceBus"]
 }
 
-# Resource Subnet for DB and Queue (Private PaaS services)
-resource "azurerm_subnet" "resources" {
-  name                 = "resource-subnet"
+# Architecture: production.deploymentRegion.virtualNetwork.resourceSubnet
+# Note: While the architecture places DB/Queue logically here, Azure PaaS services 
+# often live outside the subnet but are secured *by* subnet rules. 
+# We define this subnet for potential future resources or Private Endpoint integration.
+resource "azurerm_subnet" "resource_subnet" {
+  name                 = "snet-resources"
   resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = [local.resource_subnet_cidr]
-
-  # Required for VNet integration with SQL and ServiceBus
-  service_endpoints = [
-    "Microsoft.Sql",
-    "Microsoft.ServiceBus"
-  ]
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  # Carving out a subnet from the VNet CIDR
+  address_prefixes     = ["11.1.2.0/24"]
 }
 
 # ==============================================================================
-# Database Infrastructure
-# Input 1: relationalDatabase
-# Input 2 Governance: Azure SQL Server Standard
+# Database (Azure SQL)
+# Architecture: production.deploymentRegion.virtualNetwork.resourceSubnet.paymentDB
+# Governance: "Azure SQL Server Standard"
 # ==============================================================================
 
-resource "azurerm_mssql_server" "main" {
-  # Ensure global uniqueness
-  name                         = "${local.prefix}-sqlsvr-${random_password.sql_admin.result}"
+resource "random_password" "sql_admin" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "azurerm_mssql_server" "sql_server" {
+  name                         = "sql-${local.project_id}-${local.env}-${random_string.suffix.result}"
   resource_group_name          = azurerm_resource_group.main.name
   location                     = azurerm_resource_group.main.location
   version                      = "12.0"
@@ -101,86 +94,91 @@ resource "azurerm_mssql_server" "main" {
   administrator_login_password = random_password.sql_admin.result
   minimum_tls_version          = "1.2"
 
-  tags = local.tags
+  tags = local.common_tags
 }
 
 resource "azurerm_mssql_database" "payment_db" {
   name      = "paymentDB"
-  server_id = azurerm_mssql_server.main.id
-  collation = "SQL_Latin1_General_CP1_CI_AS"
-  # Governance: "Azure SQL Server Standard". S1 is a baseline Standard SKU.
-  sku_name = "S1"
-
-  tags = local.tags
+  server_id = azurerm_mssql_server.sql_server.id
+  
+  # Governance: "Azure SQL Server Standard". Mapping to a production Standard SKU.
+  sku_name  = "S1" 
+  
+  tags = local.common_tags
 }
 
-# Allow the Resource Subnet to talk to SQL Server
+# Allow AKS subnet to access SQL Server
 resource "azurerm_mssql_virtual_network_rule" "sql_vnet_rule" {
-  name      = "sql-vnet-rule"
-  server_id = azurerm_mssql_server.main.id
-  subnet_id = azurerm_subnet.resources.id
-  # Governance Tip: Use ignore_missing_vnet_service_endpoint
+  name      = "allow-app-subnet"
+  server_id = azurerm_mssql_server.sql_server.id
+  subnet_id = azurerm_subnet.app_subnet.id
+
+  # Governance Tip: "Use ignore_missing_vnet_service_endpoint"
   ignore_missing_vnet_service_endpoint = true
 }
 
 # ==============================================================================
-# Messaging Infrastructure
-# Input 1: topicOrQueue
-# Input 2 Governance: Service Bus Standard
+# Messaging (Service Bus)
+# Architecture: production.deploymentRegion.virtualNetwork.resourceSubnet.notificationQueue
+# Governance: "Service Bus Standard"
 # ==============================================================================
 
-resource "azurerm_servicebus_namespace" "main" {
-  # Ensure global uniqueness with a random suffix if necessary, using prefix for now
-  name                = "${local.prefix}-sbns"
+resource "azurerm_servicebus_namespace" "sb_namespace" {
+  name                = "sb-${local.project_id}-${local.env}-${random_string.suffix.result}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  # Governance: Service Bus Standard
-  sku = "Standard"
+  
+  # Governance: "Service Bus Standard"
+  sku                 = "Standard"
 
-  tags = local.tags
+  tags = local.common_tags
 }
 
-resource "azurerm_servicebus_queue" "notification" {
+resource "azurerm_servicebus_queue" "notification_queue" {
   name         = "notificationQueue"
-  namespace_id = azurerm_servicebus_namespace.main.id
+  namespace_id = azurerm_servicebus_namespace.sb_namespace.id
 
   enable_partitioning = true
 }
 
-# Allow the Resource Subnet to talk to Service Bus
+# Allow AKS subnet to access Service Bus
 resource "azurerm_servicebus_namespace_network_rule_set" "sb_vnet_rule" {
-  namespace_id                  = azurerm_servicebus_namespace.main.id
-  default_action                = "Deny"
+  namespace_id = azurerm_servicebus_namespace.sb_namespace.id
+  default_action = "Deny"
   public_network_access_enabled = false
 
   network_rules {
-    subnet_id = azurerm_subnet.resources.id
-    # Governance Tip: Use ignore_missing_vnet_service_endpoint
+    subnet_id = azurerm_subnet.app_subnet.id
+    # Governance Tip: "Use ignore_missing_vnet_service_endpoint"
     ignore_missing_vnet_service_endpoint = true
   }
 }
 
 # ==============================================================================
-# Compute Fabric (Kubernetes)
-# Input 1: k8s, minimumNodes: 3
+# Compute (AKS)
+# Architecture: ...applicationSubnet.deploymentFabric (Kubernetes cluster)
+# Architecture Metadata: minimumNodes: "3"
 # ==============================================================================
 
-resource "azurerm_kubernetes_cluster" "main" {
-  name                = "${local.prefix}-aks"
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                = "aks-${local.project_id}-${local.env}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  dns_prefix          = "${local.prefix}-aks"
+  dns_prefix          = "aks-${local.project_id}-${local.env}"
 
   default_node_pool {
     name       = "default"
-    # Input 1 Metadata: minimumNodes: "3"
-    node_count = 3
-    vm_size    = "Standard_DS2_v2"
-    # Deploy into Application Subnet
-    vnet_subnet_id = azurerm_subnet.application.id
+    node_count = 3 # Architecture requirement
+    vm_size    = "Standard_D2s_v3" # Production baseline
+    
+    # Architecture: Placement in applicationSubnet
+    vnet_subnet_id = azurerm_subnet.app_subnet.id
   }
 
-  # Using Azure CNI for advanced VNet integration
+  identity {
+    type = "SystemAssigned"
+  }
+
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
@@ -188,44 +186,12 @@ resource "azurerm_kubernetes_cluster" "main" {
     dns_service_ip    = "10.0.0.10"
   }
 
-  identity {
-    type = "SystemAssigned"
-  }
-
-  tags = local.tags
+  tags = local.common_tags
 }
 
-# ==============================================================================
-# Outputs
-# ==============================================================================
-
-output "resource_group_name" {
-  value = azurerm_resource_group.main.name
-}
-
-output "aks_cluster_name" {
-  value = azurerm_kubernetes_cluster.main.name
-}
-
-output "sql_server_name" {
-  value = azurerm_mssql_server.main.name
-  sensitive = true
-}
-
-output "sql_database_name" {
-  value = azurerm_mssql_database.payment_db.name
-}
-
-output "servicebus_namespace_name" {
-  value = azurerm_servicebus_namespace.main.name
-}
-
-output "servicebus_queue_name" {
-  value = azurerm_servicebus_queue.notification.name
-}
-
-# Sensitive output for initial setup - in real prod this might go to KeyVault
-output "sql_admin_password" {
-  value     = random_password.sql_admin.result
-  sensitive = true
+# Random suffix for globally unique resource names (SQL, SB)
+resource "random_string" "suffix" {
+  length  = 6
+  special = false
+  upper   = false
 }

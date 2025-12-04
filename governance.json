@@ -4,7 +4,7 @@
             "regions": ["uksouth", "ukwest"],
             "services": [
                 "Azure SQL Server Standard",
-                "Service Bus Standard"
+                "Service Bus Premium"
             ],
             "tips": [
                 "Use ignore_missing_vnet_service_endpoint"
