@@ -2,7 +2,7 @@
 Architecture as code POC using LikeC4
 
 ## Logical architecture
-![Logical](./images/logical-view.png)
+![Logical](images/logical-view.png)
 
 ## Deployment view
-![Deployment](./images/deployment-view.png)
+![Deployment](images/deployment-view.png)
