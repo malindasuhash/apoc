@@ -1,5 +1,5 @@
-# apoc
-Architecture as code POC using LikeC4
+# Architecture to a Working solution
+The goal of this project is to deploy an architecture model defined using LikeC4 to multiple cloud environments as a concrete deployment artifact.
 
 ## Logical architecture
 ![Logical](images/Logical-view.png)
@@ -9,33 +9,38 @@ Architecture as code POC using LikeC4
 
 ## Workflow
 - Prerequsites
+    - LikeC4 installed and ready to use.
     - Gemini AI - I think you can use most AI tools for this.
 
 - High level steps
     - Define application model.
     - Define deployment model.
     - Export architecture model as JSON.
-    - Use Gemini AI - content generation capability to generate Terrafom script targetting cloud vendor.
+        - It seems that AI models prefer "structured" data (i.e. JSON) than understanding a Domain Specific Language (DSL).
+    - Use Gemini AI - content generation capability to generate the Terrafom script targetting a cloud vendor.
+    - *There is a subsequent step to deploy the actual program code which I believe require a Docker manifest.*
 
-- Use can use the following command to export to JSON.
+- Outcome of the above high level steps is the infrasturcture that is ready to deploy application code.
+
+- Once the application and deployement model is defined, then use can use the following command to export it to JSON.
 ```
  likec4 export json -o simplePayments.json
 ```
 
 ## Lessons learnt so far
 - Use metadata to annotate application model.
-    - AI is very good detecting these annotations and adjusting the script.
+    - AI is very good detecting these annotations and adjusting output script.
 
-- Provide hints to AI model.
+- Provide additional hints to the AI model.
     - I have created governance.json file that include approved cloud regions and services to use.
 
 - Auto generation alone may not work straight out of the box.
-    - I included a section called "tips" in governance.json file to help guide the model. So far I have include **ignore_missing_vnet_service_endpoint** property; not totally sure whether its needed.
+    - I included a section called "tips" in governance.json file to help guide the generation process. So far I have include **ignore_missing_vnet_service_endpoint** property; not totally sure whether its needed.
 
 - AI Model selection
     - As expected, Gemini Chat interface is different to when you are interacting with the model using APIs. 
-    - There are number of models available each with their strengths. There are many models optimised for various tasks.
-    - I suspect if we use a code generation model, the outcomes will be much better. 
+    - There are number of models available to interact with but each has strengths. 
+    - I suspect if we use a code generation model like GitHub Copilot, then the outcomes will be better. 
     - You can see example list of models that Google offer. There are lots, I mean a lot more!
     - The **supportedGenerationMethods** appears to indicate what features are available. For us its **generateContent** is what we need.
 ```
@@ -86,3 +91,7 @@ Architecture as code POC using LikeC4
   "nextPageToken": "Ch9tb2RlbHMvdmVvLTMuMS1nZW5lcmF0ZS1wcmV2aWV3"
 }
 ```
+- Areas to look at are:
+    - How to make script generation as predictable as possible?
+    - How does updates to existing Terraform script work?
+    - Can I retain the same ID? 
