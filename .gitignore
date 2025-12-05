@@ -418,5 +418,6 @@ FodyWeavers.xsd
 *.msp
 
 # Terraform
-
 .terraform/
+*.tf
+*.tfplan

@@ -27,6 +27,15 @@ The goal of this project is to deploy an architecture model defined using LikeC4
  likec4 export json -o simplePayments.json
 ```
 
+- Once the architecture is exported as a JSON file, then the model can be invoked. The C# solution that invoke Gemini model can be found in "terraform-poc" folder.
+
+- Bulild the project and before you run, have the following environmental variables created.
+  - GEMINI_API_KEY - Gemini API key, you need to sign up to get one. There is a free trial available.
+  - archJson - Location of simplePayments.json file(e.g. C:\VS\aac\apoc\simplePayments.json).
+  - govJson - Governance file (e.g C:\VS\aac\apoc\governance.json).
+  - terraform_file - Location and file name where the terraform file should be created (e.g. C:\VS\aac\apoc\main.tf)
+
+
 ## Lessons learnt so far
 - Use metadata to annotate application model.
     - AI is very good detecting these annotations and adjusting output script.
