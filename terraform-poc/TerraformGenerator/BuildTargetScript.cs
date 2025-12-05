@@ -37,6 +37,15 @@ public class BuildTargetScript
             return;
         }
 
+        var system_instructions = @"
+        You are a strict Terraform code generator.
+        
+        1. You must STRICTLY follow the naming conventions provided in the input JSON.
+        2. Do not invent new naming patterns.
+        3. Do not add random suffixes (like -x7d2) unless explicitly asked.
+        4. If a resource name is not defined, derive it using the pattern: resource_type-project-env.
+        ";
+
         // 2. Construct the Prompt
         string prompt = $@"
         You are an expert DevOps engineer and Terraform architect.
@@ -54,18 +63,23 @@ public class BuildTargetScript
         2. Conflict Resolution: If Input 1 is generic (e.g., 'Database'), Input 2 is the authority (e.g., 'Azure SQL Standard').
         3. Output strictly valid HCL (Terraform) code.
         4. Do not include markdown formatting (like ```hcl), just the raw code.
+        5. Must follow the naming conventions defined in governance policy.
+        6. Must have highest security protection in Networks.
         ";
 
         // 3. Prepare the JSON Payload
         var requestBody = new
         {
+            system_instruction = new { parts = new[] { new { text = system_instructions } } },
             contents = new[]
             {
                 new { parts = new[] { new { text = prompt } } }
             },
             generationConfig = new
             {
-                temperature = 0.2   // Reduce randomness              
+                temperature = 0.0, // Maximum determinism
+                topP = 0.1,        // Restrict word choice pool
+                seed = 12345       // Force consistent random seed              
             }
         };
 

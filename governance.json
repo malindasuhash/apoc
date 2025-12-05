@@ -8,7 +8,19 @@
             ],
             "tips": [
                 "Use ignore_missing_vnet_service_endpoint"
-            ]
+            ],
+            "rules": {
+                "resource_group": "rg-<project>-<env>-<region>",
+                "vnet": "vnet-<project>-<env>",
+                "aks_cluster": "aks-<project>-<env>",
+                "service_bus_namespace": "sb-<project>-<env>"
+            },
+            "constraints": {
+                "no_random_suffixes": true,
+                "lowercase_only": true,
+                "separator": "-",
+                "project_unique_name": "simple-pay-2025"
+            }
         },
 
         "aws": {

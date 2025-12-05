@@ -33,18 +33,17 @@ deployment {
                     }
                 }
 
-                network resourceSubnet {
-                    title 'Resources Subnet'
-
-                    // Notification queue
-                    topicOrQueue notificationQueue {
+                // Notification queue
+                topicOrQueue notificationQueue {
+                    metadata {
+                        type 'Topic'
+                        }
                         instanceOf backendService.notification
-                    }
+                }
 
-                    // Database
-                    relationalDatabase paymentDB {
+                // Database
+                relationalDatabase paymentDB {
                         instanceOf backendService.db
-                    }
                 }
             }
         }
